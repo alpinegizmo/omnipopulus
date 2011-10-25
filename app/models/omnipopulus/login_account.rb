@@ -1,6 +1,6 @@
 module Omnipopulus
   class LoginAccount < ActiveRecord::Base
-    belongs_to :user
+    belongs_to :user, :class_name => '::User'
     serialize :auth_hash
 
     def self.find_or_create_from_auth_hash(auth_hash)
