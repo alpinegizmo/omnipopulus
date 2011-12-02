@@ -4,7 +4,7 @@ module Omnipopulus
     serialize :auth_hash
 
     def self.find_or_create_from_auth_hash(auth_hash)
-      if (account = find_by_remote_account_id(auth_hash['uid']))
+      if (account = find_by_remote_account_id(auth_hash['uid'].to_s))
         account.assign_account_info(auth_hash)
         account.auth_hash = auth_hash if self.attribute_names.include?('auth_hash')
         account.save
