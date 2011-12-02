@@ -25,7 +25,7 @@ module Omnipopulus
       return self.user if self.user
 
       ::User.create do |user|
-        user.login_account = self
+        user.login_accounts << self
       end
     end
   end
