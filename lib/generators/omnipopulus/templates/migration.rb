@@ -19,6 +19,8 @@ class CreateOmnipopulusTables < ActiveRecord::Migration
         t.string :name
         t.string :login
         t.string :picture_url
+        t.string :account_url
+        t.text :auth_hash
         t.string :access_token
         t.string :access_token_secret
         # Any additional fields here 

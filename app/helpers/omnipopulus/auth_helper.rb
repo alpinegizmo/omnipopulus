@@ -19,5 +19,9 @@ module Omnipopulus
     def github_login_button
       content_tag(:a, content_tag(:span, 'Sign in with Github'), :class => 'omnipopulus-button github', :href => auth_request_path(:service => 'github'), :rel => 'external')
     end
+
+    def angellist_login_button
+      content_tag(:a, content_tag(:span, 'Sign in with AngelList'), :class => 'omnipopulus-button angellist', :href => auth_request_path(:service => 'angellist'), :rel => 'external')
+    end
   end
 end

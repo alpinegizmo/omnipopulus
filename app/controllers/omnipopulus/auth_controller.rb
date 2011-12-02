@@ -28,6 +28,8 @@ module Omnipopulus
           Omnipopulus::LinkedInAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
         when 'github' then
           Omnipopulus::GithubAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
+        when 'angellist' then
+          Omnipopulus::AngelListAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
       end
 
       if current_user
