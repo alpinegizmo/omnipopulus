@@ -9,6 +9,14 @@ module Omnipopulus
         redirect_to(root_path)
       end
     end
+    
+    def add
+      if current_user?
+        render :new
+      else
+        redirect_to(root_path)
+      end
+    end
 
     def callback
       account = case request.env['omniauth.auth']['provider']
@@ -22,7 +30,13 @@ module Omnipopulus
           Omnipopulus::GithubAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
       end
 
-      self.current_user = account.find_or_create_user
+      if current_user
+        account.user ||= self.current_user # don't overwrite user account that is linked to login account
+        account.save
+        self.current_user = account.user   # log into associated account
+      else
+        self.current_user = account.find_or_create_user
+      end
 
       flash[:notice] = 'You have logged in successfully.'
       redirect_back_or_default(root_path)

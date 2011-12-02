@@ -2,7 +2,7 @@ module Omnipopulus
   class User < ActiveRecord::Base
     self.abstract_class = true
     
-    has_one :login_account, :class_name => 'Omnipopulus::LoginAccount', :dependent => :destroy
+    has_many :login_accounts, :class_name => 'Omnipopulus::LoginAccount', :dependent => :destroy
     delegate :login, :name, :picture_url, :account_url, :access_token, :access_token_secret, :to => :login_account
 
     def to_param
@@ -13,6 +13,10 @@ module Omnipopulus
       end
     end
     
+    def login_account
+      login_accounts.first
+    end
+
     def method_missing(method_name, *args, &block)
       if (account_type = method_name.to_s.match(/from_([^?]*)\?/))
         account_class = account_type[1].to_s.classify + 'Account'
