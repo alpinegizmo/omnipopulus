@@ -19,29 +19,35 @@ module Omnipopulus
     end
 
     def callback
-      account = case request.env['omniauth.auth']['provider']
-        when 'twitter' then
-          Omnipopulus::TwitterAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
-        when 'facebook' then
-          Omnipopulus::FacebookAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
-        when 'linked_in' then
-          Omnipopulus::LinkedInAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
-        when 'github' then
-          Omnipopulus::GithubAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
-        when 'angellist' then
-          Omnipopulus::AngelListAccount.find_or_create_from_auth_hash(request.env['omniauth.auth'])
-      end
+      account_classes = { 
+        'twitter' => Omnipopulus::TwitterAccount,
+        'facebook' => Omnipopulus::FacebookAccount,
+        'linked_in' => Omnipopulus::LinkedInAccount,
+        'github' => Omnipopulus::GithubAccount,
+        'angellist' => Omnipopulus::AngelListAccount 
+      }
+
+      auth_hash = request.env['omniauth.auth']
+      account_class = account_classes[auth_hash['provider']]
+      account = account_class.find_from_auth_hash(auth_hash) || account_class.create_from_auth_hash(auth_hash)
+      account.save_data(auth_hash)
 
       if current_user
         account.user ||= self.current_user # don't overwrite user account that is linked to login account
         account.save
         self.current_user = account.user   # log into associated account
       else
-        self.current_user = account.find_or_create_user
+        begin
+          self.current_user = account.find_or_create_user(session)
+        rescue InvitationMissing => e
+          flash[:notice] = e.message
+          redirect_to root_path and return
+        end
       end
 
       flash[:notice] = 'You have logged in successfully.'
-      redirect_back_or_default(root_path)
+#      redirect_back_or_default(root_path)
+      redirect_to root_path
     end
 
     def failure

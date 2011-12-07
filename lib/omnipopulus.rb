@@ -1,7 +1,6 @@
 module Omnipopulus
   require 'omnipopulus/service_config'
 
-  # Twitter & Facebook app configs
   mattr_accessor :service_configs
   @@service_configs = {}
 
@@ -9,7 +8,7 @@ module Omnipopulus
     yield self
   end
 
-  # # config.twitter APP_KEY, APP_SECRET, :scope => ['foo', 'bar']
+  # config.twitter APP_KEY, APP_SECRET, :scope => ['foo', 'bar']
   def self.method_missing(method_name, *args, &block)
     if ::OmniAuth::Strategies.const_defined?(method_name.to_s.classify)
       args << {} unless args.last.is_a?(Hash)

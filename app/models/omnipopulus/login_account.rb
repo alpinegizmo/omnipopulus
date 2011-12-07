@@ -3,15 +3,8 @@ module Omnipopulus
     belongs_to :user, :class_name => '::User'
     serialize :auth_hash
 
-    def self.find_or_create_from_auth_hash(auth_hash)
-      if (account = find_by_remote_account_id(auth_hash['uid'].to_s))
-        account.assign_account_info(auth_hash)
-        account.auth_hash = auth_hash if self.attribute_names.include?('auth_hash')
-        account.save
-        account
-      else
-        create_from_auth_hash(auth_hash)
-      end
+    def self.find_from_auth_hash(auth_hash)
+      find_by_remote_account_id(auth_hash['uid'].to_s)
     end
 
     def self.create_from_auth_hash(auth_hash)
@@ -21,12 +14,19 @@ module Omnipopulus
       end
     end
 
-    def find_or_create_user
+    def save_data(auth_hash)
+      self.assign_account_info(auth_hash)
+      self.auth_hash = auth_hash if self.class.attribute_names.include?('auth_hash')
+      self.save
+    end
+
+    def find_or_create_user(session)
       return self.user if self.user
 
-      ::User.create do |user|
-        user.login_accounts << self
-      end
+      user = ::User.create_from_session(session)
+      self.user_id = user.id
+      self.save
+      self.user
     end
   end
 end
