@@ -7,7 +7,7 @@ require 'omniauth/core'
 require 'omniauth/oauth'
 require 'bcrypt'
 
-  module Omnipopulus
+module Omnipopulus
   class Engine < Rails::Engine
 
     config.to_prepare do

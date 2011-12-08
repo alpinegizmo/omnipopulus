@@ -23,7 +23,7 @@ module Omnipopulus
     def find_or_create_user(session)
       return self.user if self.user
 
-      user = ::User.create_from_session(session)
+      user = ::User.respond_to?(:create_from_session) ? ::User.create_from_session(session) : ::User.create
       self.user_id = user.id
       self.save
       self.user
