@@ -1,0 +1,26 @@
+<div id="omnipopulus-login">
+  <% if flash[:error] -%>
+    <div class="error">
+      <p>
+        <%= flash[:error] %>
+      </p>
+    </div>
+  <% end -%>
+  <div class="information">
+    <h1>Connect</h1>
+    <p class="large">
+      You can connect your account to Twitter, Facebook, Github, LinkedIn, and/or AngelList.
+    </p>
+    <p>
+      Select your preferred method(s) and you'll be sent off to authorise us to use your account.
+    </p>
+    <p>
+      It&#8217;ll only take a second and your information will be perfectly safe. We don't get access to your password and <em>we won't post or tweet anything from your account</em> without your explicit permission.
+    </p>
+  </div>
+  <%= twitter_connect_button unless current_user.from_twitter? %>
+  <%= facebook_connect_button unless current_user.from_facebook? %>
+  <%= github_connect_button unless current_user.from_github? %>
+  <%= linkedin_connect_button unless current_user.from_linked_in? %>
+  <%= angellist_connect_button unless current_user.from_angellist? %>
+</div>

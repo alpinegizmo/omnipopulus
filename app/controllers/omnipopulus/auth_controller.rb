@@ -12,9 +12,9 @@ module Omnipopulus
     
     def add
       if current_user?
-        render :new
+        # render
       else
-        redirect_to(root_path)
+        redirect_to root_path
       end
     end
 
@@ -31,12 +31,15 @@ module Omnipopulus
       account_class = account_classes[auth_hash['provider']]
       account = account_class.find_from_auth_hash(auth_hash) || account_class.create_from_auth_hash(auth_hash)
       account.save_data(auth_hash)
+      provider_name = account_class.name.split(':').last.sub('Account', '')
 
       if current_user
+        success_message = "You have connected your account to #{provider_name}."
         account.user ||= self.current_user # don't overwrite user account that is linked to login account
         account.save
         self.current_user = account.user   # log into associated account
       else
+        success_message = "You have logged in via #{provider_name}."
         begin
           self.current_user = account.find_or_create_user(session)
         rescue InvitationMissing => e
@@ -45,7 +48,7 @@ module Omnipopulus
         end
       end
 
-      flash[:notice] = 'You have logged in successfully.'
+      flash[:notice] = success_message
 #      redirect_back_or_default(root_path)
       redirect_to root_path
     end
